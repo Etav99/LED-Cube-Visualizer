@@ -58,14 +58,12 @@ int main()
 		return 1;
 	}
 
+	char port[5] = "COM ";
 	char x;
 	cout << "Wprowadz numer portu COM, do ktorego podlaczona jest kostka: ";
-	cin >> x;
-
-	char port[5] = "COM ";
-	port[3] = x;
+	cin >> port[3];
 	WCHAR    wPort[5];
-	MultiByteToWideChar(0, 0, port, 4, wPort, 5);
+	MultiByteToWideChar(0, 0, port, 5, wPort, 5);
 
 	DCB dcb;
 	dcb.DCBlength = sizeof(dcb);
@@ -73,7 +71,7 @@ int main()
 	dcb.fParity = TRUE;
 	dcb.Parity = EVENPARITY;
 	dcb.StopBits = ONESTOPBIT;
-	dcb.ByteSize = 7;
+	dcb.ByteSize = 8;
 	dcb.fDtrControl = DTR_CONTROL_ENABLE;
 	dcb.fRtsControl = RTS_CONTROL_ENABLE;
 	dcb.fOutxCtsFlow = FALSE;
@@ -86,13 +84,14 @@ int main()
 	dcb.fNull = FALSE;
 
 	HANDLE hNumPort;
-	hNumPort = CreateFile((LPCWSTR)wPort, GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
-	cout << "\n\nLaczenie z kostka\n\n";
-	while (!SetCommState(hNumPort, &dcb));
+	hNumPort = CreateFile(wPort, GENERIC_WRITE | GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
+	cout << wPort;
+	cout << "\n\nLaczenie z kostka przez port " << port << "\n\n";
+	while (!SetCommState(hNumPort, &dcb) && !consoleExit);
 	cout << "Polaczono!";
 
 	CoInitialize(0);
-	AudioSink sink(128, &hNumPort);
+	AudioSink sink(512, &hNumPort);
 	Streamer streamer(&sink);
 	str = &streamer;
 	streamer.Initialize();
@@ -100,4 +99,8 @@ int main()
 		streamer.recordSamples();
 	}
 	streamer.stop();
+	uint8_t zeros[64] = {};
+	WriteFile(hNumPort, (char*)(zeros), 64, NULL, 0);
+	CloseHandle(hNumPort);
+	return 0;
 }

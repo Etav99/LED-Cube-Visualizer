@@ -15,17 +15,16 @@ private:
 	double* in;
 	fftw_complex* out;
 	double* x;
-	double* y;
+	double* y, * y_prev;
 	int filled;
 	int position;
 	int nFreqSamples;
 	int bufferSize;
 	WAVEFORMATEX format;
 	uint8_t cube[64] = {};
-	uint8_t rec[64] = {};
 	DCB dcb;
 	HANDLE *hNumPort;
-	DWORD RS_ile;
+	DWORD bytesSent;
 
 public:
 	AudioSink(int bufferSize, HANDLE *hNumPort);

@@ -27,9 +27,8 @@ private:
 	UINT32 packetLength = 0;
 	BYTE* pData;
 	DWORD flags;
-public:
-	bool exit = 0;
 
+public:
 	Streamer(AudioSink* pMySink);
 	void Initialize();
 	void recordSamples();

@@ -114,6 +114,4 @@ void Streamer::stop()
 		SAFE_RELEASE(pDevice)
 		SAFE_RELEASE(pAudioClient)
 		SAFE_RELEASE(pCaptureClient)
-
-		exit = 1;
 }
